@@ -27,6 +27,59 @@
     
     <article>
       <header>
+        <h1><a href="./tail-recursion.html" title="Permalink">Tail Recursion</a></h1>
+        <address>Published <time>25 September, 2018</time> by Sidney Pham</address>
+      </header>
+      <div class="content">
+        <h2>What on earth is tail recursion?</h2>
+<p>Tail recursion is a special form of recursion that can be optimised by a compiler to run much like iteration. A function is <em>tail recursive</em> if the final operation that the function performs is the recursive call.</p>
+<p>Tail recursion is a special form of <em>tail call</em>. A tail call is any function call that occurs at the very end of a function. Since there is no more work to be done by the caller, the tail call can replace its stack frame, rather than creating a new one. The called function will return directly to the <em>original</em> caller. This optimisation of non-recursive tail calls typically saves little time and space, because there are not that many such tail calls. However, in functions where recursion happens through a tail call, this <em>tail call optimisation</em> becomes very worthwhile. Additionally, this <em>tail recursion elimination</em> is slightly simpler than tail call optimisation to implement for a compiler, because it can simply implement a <code>GOTO</code> that returns control to the top of the tail recursive function, rather than requiring special knowledge of another function's internal structure.</p>
+<p>(Strictly speaking, tail call optimisation does not necessarily have to replace the caller's stack frame with the callee's but, rather, guarantees that an unbounded number of calls in tail position require only a bounded amount of space.)</p>
+<h2>So what does it look like?</h2>
+<p>Consider a regular recursive implementation of a factorial function:</p>
+<pre><code class="language-python">def fact(n):
+    if n == 0:
+        return 1
+    return n * fact(n - 1)
+</code></pre>
+<p>Let us observe what happens when <code>fact(3)</code> is called. Firstly, a <em>stack frame</em> is created for <em>fact</em> on the call stack. Then, since <code>3 != 0</code>, it calls <code>fact(2)</code> (which creates a new stack frame) and waits for a result so that it can multiply this with <code>3</code>. Similarly, <code>fact(2)</code> calls <code>fact(1)</code>, and <code>fact(1)</code> calls <code>fact(0)</code>, at which point this accumulation of stack frames ceases. Now, the stack has to <em>unwind</em>, returning a result to <code>fact(3)</code> which calculates its result, and subsequently returns this to its caller.</p>
+<p>Now, consider a tail recursive implementation of the same function:</p>
+<pre><code>def fact_tail_rec(n):
+    return fact_helper(n, 1)
+    
+def fact_helper(n, acc):
+    if n == 0:
+        return acc
+    return fact_helper(n - 1, acc * n)
+</code></pre>
+<p>Observe the pattern used in the helper function - there is an <em>accumulator</em>. This parameter is what gets built up so that at the base case it is returned. Tail recursive functions use an accumulator so that a value can be immediately returned, rather than having to unwind the stack and perform further computation.</p>
+<p>The accumulator's initial value is typically an <em>identity</em> with respect to some operation. For example, in our <code>fact</code> function, the accumulator begins at 1, because 1 is the multiplicative identity, whereas a tail recursive summation function would likely use 0, the additive identity.</p>
+<p>When I first wrote a tail recursive function, it didn't feel like a <em>proper</em> recursive function, because it was keeping track of state from outside the function (in the accumulator). In fact, that was because tail recursion and iteration are essentially equivalent.</p>
+<h2>Tail recursion and iteration</h2>
+<p>Any function written using tail recursion is semantically equivalent to iteration. In fact, in some functional languages like Scheme, tail recursion is the basic iteration mechanism.</p>
+<p>This is (unrigorously) because any iterative code of the form</p>
+<pre><code>def f():
+    while A:
+        B
+    return C
+</code></pre>
+<p>where <code>A</code> and <code>C</code> are expressions and <code>B</code> is a sequence of statements, can be expressed using tail recursion as</p>
+<pre><code>def f():
+    if A:
+        B
+        return f()
+    else:
+        return C
+</code></pre>
+<h2>Why use tail recursion?</h2>
+<p>You might not actually want tail recursion. Firstly, the language you use might not support it. For example, <a href="http://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html">Python does not</a> and ECMAScript 6 guarantees tail call optimisation but many JavaScript engines do not support it. Secondly, iteration is perfectly fine, and a much safer option in most languages. Thirdly, tail call optimisation is incompatible with nice stack traces because stack frames are overwritten, which can lead to inadvertently recursive functions becoming difficult to debug.</p>
+<p>On the other hand, tail recursion means that a recursive function can run in <em>O(1)</em> stack space, which means that you can perform an indefinite amount of recursive calls without causing a stack overflow. Tail recursion can also provide a more subjectively elegant solution, and some extremely pure functional languages may not offer iteration. However, in general, good advice is to use iteration to avoid the hassle of figuring out whether or not tail call optimisation is guaranteed.</p>
+
+      </div>
+    </article>
+    
+    <article>
+      <header>
         <h1><a href="./sydney-boys-high-school-login-page.html" title="Permalink">Sydney Boys High School Login Page</a></h1>
         <address>Published <time>22 September, 2018</time> by Sidney Pham</address>
       </header>
