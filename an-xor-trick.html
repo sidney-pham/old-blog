@@ -29,24 +29,26 @@
     <article>
         <header>
           <h1><a href="./an-xor-trick.html" title="Permalink">An XOR Trick</a></h1>
-          <address>Published <time>12 October, 2017</time> by Sidney Pham</address>
+          <address>Published <time>11 October, 2017</time> by Sidney Pham</address>
         </header>
         <div class="content">
           <p><strong><em>'Given an array of integers, every element appears twice except for one. Find that single element.'</em></strong></p>
 <p>There are two intuitive (but inefficient) solutions. You could sort the array, then compare consecutive elements. Alternatively, you could use a set:</p>
-<pre><code>set = Set()
-for item in array:
-  if item in set:
-    set.remove(item)
-  else:
-    set.add(item)
-return set.pop()
+<pre><code class="language-python">def find_singleton(numbers):
+  s = set()
+  for item in numbers:
+    if item in s:
+      s.remove(item)
+    else:
+      s.add(item)
+  return s.pop()
 </code></pre>
 <p>But a cooler way to do it is:</p>
-<pre><code>result = 0
-for item in array:
-  result ^= item
-return result
+<pre><code class="language-python">def find_singleton():
+  result = 0
+  for item in array:
+    result ^= item
+  return result
 </code></pre>
 <p>where <code>^</code> is the XOR operator. This works because of the commutativity of XOR. Spooky stuff.</p>
 
