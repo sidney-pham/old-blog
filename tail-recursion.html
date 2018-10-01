@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="./assets/style.css">
   <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
   <script src="https://use.fontawesome.com/32b00ec458.js" defer></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+  <link rel="stylesheet" href="./assets/prism.css">
 </head>
 <body>
   <header>
@@ -27,7 +29,7 @@
     <article>
         <header>
           <h1><a href="./tail-recursion.html" title="Permalink">Tail Recursion</a></h1>
-          <address>Published <time>26 September, 2018</time> by Sidney Pham</address>
+          <address>Published <time>01 October, 2018</time> by Sidney Pham</address>
         </header>
         <div class="content">
           <h2>What on earth is tail recursion?</h2>
@@ -44,7 +46,7 @@
 <p>Let us observe what happens when <code>fact(3)</code> is called. Firstly, a <em>stack frame</em> is created for <code>fact(3)</code> on the call stack. Then, since <code>3 != 0</code>, it calls <code>fact(2)</code> (which creates a new stack frame) and waits for a result so that it can multiply this with <code>3</code>. Similarly, <code>fact(2)</code> calls <code>fact(1)</code>, and <code>fact(1)</code> calls <code>fact(0)</code>, at which point this accumulation of stack frames ceases. Now, the stack has to <em>unwind</em>, returning a result to <code>fact(3)</code> which calculates its result, and subsequently returns this to its caller.</p>
 <p>Now, consider a tail recursive implementation of the same function:</p>
 <p>(Note: I'm using Python because it's basically pseudocode, but Python <strong>does not support tail call optimisation</strong>, so this example can overflow the stack in Python.)</p>
-<pre><code>def fact_tail_rec(n):
+<pre><code class="language-python">def fact_tail_rec(n):
     return fact_helper(n, 1)
     
 def fact_helper(n, acc):
@@ -53,27 +55,27 @@ def fact_helper(n, acc):
     return fact_helper(n - 1, acc * n)
 </code></pre>
 <p>Observe the pattern used in the helper function — there is an <em>accumulator</em>. This parameter is what gets built up so that at the base case it is returned. Tail recursive functions use an accumulator so that a value can be immediately returned, rather than having to unwind the stack and perform further computation.</p>
-<p>The accumulator's initial value is typically an <em>identity</em> with respect to some operation. For example, in our <code>fact</code> function, the accumulator begins at 1, because 1 is the multiplicative identity, whereas a tail recursive summation function would likely use 0, the additive identity.</p>
+<p>The accumulator's initial value is typically an <em>identity</em> with respect to some operation. For example, in our <code>fact</code> function, the accumulator begins at \(1\), because \(1\) is the multiplicative identity, whereas a tail recursive summation function would likely use \(0\), the additive identity.</p>
 <h2>Tail recursion and iteration</h2>
 <p>When I first wrote a tail recursive function, it didn't feel like a <em>proper</em> recursive function, because it was keeping track of state from outside the function (in the accumulator). In fact, that was because any function written using tail recursion is semantically equivalent to iteration. (In fact, in some functional languages like Scheme, tail recursion is the basic iteration mechanism.)</p>
 <p>This is (unrigorously) because any iterative code of the form</p>
-<pre><code>def f():
+<pre><code class="language-python">def f():
     while A:
-        B
-    return C
+        # Do something.
+    return B
 </code></pre>
-<p>where <code>A</code> and <code>C</code> are expressions and <code>B</code> is a sequence of statements, can be expressed using tail recursion as</p>
-<pre><code>def f():
+<p>where <code>A</code> and <code>B</code> are expressions, can be expressed using tail recursion as</p>
+<pre><code class="language-python">def f():
     if A:
-        B
+        # Do something.
         return f()
     else:
-        return C
+        return B
 </code></pre>
 <p>Note that the tail recursive call does not have to be lexically at the bottom of the function, it just has to be the last operation performed by the function.</p>
 <h2>Why use tail recursion?</h2>
 <p>You might not actually want tail recursion. Firstly, the language you use might not support it. For example, <a href="http://neopythonic.blogspot.com/2009/04/tail-recursion-elimination.html">Python does not</a> and ECMAScript 6 guarantees tail call optimisation but many JavaScript engines do not support it. Secondly, iteration is perfectly fine, and a much safer option in most languages. Thirdly, tail call optimisation is incompatible with nice stack traces because stack frames are overwritten, which can lead to inadvertently recursive functions becoming difficult to debug.</p>
-<p>On the other hand, tail recursion means that a recursive function can run in <em>O(1)</em> stack space, which means that you can perform an indefinite amount of recursive calls without causing a stack overflow. Tail recursion can also provide a more subjectively elegant solution, and some extremely pure functional languages may not offer iteration. However, in general, good advice is to use iteration to avoid the hassle of figuring out whether or not tail call optimisation is guaranteed.</p>
+<p>On the other hand, tail recursion means that a recursive function can run in \(O(1)\) stack space, which means that you can perform an indefinite amount of recursive calls without causing a stack overflow. Tail recursion can also provide a more subjectively elegant solution, and some extremely pure functional languages may not offer iteration. However, in general, good advice is to use iteration to avoid the hassle of figuring out whether or not tail call optimisation is guaranteed.</p>
 
         </div>
     </article>
@@ -90,5 +92,6 @@ def fact_helper(n, acc):
   <h3>Made with &hearts; using <a href="https://github.com/quadrupleslap/leven">Leven</a>.</h3>
 </footer>
 
+  <script src="./assets/prism.js"></script>
 </body>
 </html>
