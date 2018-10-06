@@ -44,9 +44,9 @@
   return s.pop()
 </code></pre>
 <p>But a cooler way to do it is:</p>
-<pre><code class="language-python">def find_singleton():
+<pre><code class="language-python">def find_singleton(numbers):
   result = 0
-  for item in array:
+  for item in numbers:
     result ^= item
   return result
 </code></pre>

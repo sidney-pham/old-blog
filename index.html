@@ -29,6 +29,36 @@
     
     <article>
       <header>
+        <h1><a href="./the-comma-operator.html" title="Permalink">The Comma Operator</a></h1>
+        <address>Published <time>06 October, 2018</time> by Sidney Pham</address>
+      </header>
+      <div class="content">
+        <h2>What is it?</h2>
+<p>An operator (that is terrible for clarity) available in a few languages like C and JavaScript that allows you to evaluate a chain of expressions and only return (typically) the rightmost one.</p>
+<p>For example,</p>
+<pre><code class="language-javascript">return (a, b, ..., z);
+</code></pre>
+<p>will evaluate all of <code>a, b, ...</code> and return only <code>z</code>.</p>
+<h2>A use case</h2>
+<pre><code class="language-javascript">const f = x =&gt; g(x);
+</code></pre>
+<p><em>Hmm, <code>f</code> isn't working as expected. Let's test its inputs...</em></p>
+<p>You could grudgingly do:</p>
+<pre><code class="language-javascript">const f = x =&gt; {
+  console.log(x);
+  return g(x);
+};
+</code></pre>
+<p>Or instead use the comma operator:</p>
+<pre><code class="language-javascript">const f = x =&gt; (console.log(x), g(x));
+</code></pre>
+<p>Now immediately get rid of your debugging print statements in case anyone sees this monstrosity. You've saved 10 seconds of your time. Use it wisely.</p>
+
+      </div>
+    </article>
+    
+    <article>
+      <header>
         <h1><a href="./tail-recursion.html" title="Permalink">Tail Recursion</a></h1>
         <address>Published <time>01 October, 2018</time> by Sidney Pham</address>
       </header>
@@ -168,9 +198,9 @@ def fact_helper(n, acc):
   return s.pop()
 </code></pre>
 <p>But a cooler way to do it is:</p>
-<pre><code class="language-python">def find_singleton():
+<pre><code class="language-python">def find_singleton(numbers):
   result = 0
-  for item in array:
+  for item in numbers:
     result ^= item
   return result
 </code></pre>
