@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge Sort&#x27;s Time Complexity · Sidney Pham&#x27;s Blog</title>
+  <link rel="stylesheet" href="./assets/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <script src="https://use.fontawesome.com/32b00ec458.js" defer></script> 
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+  <link rel="stylesheet" href="./assets/prism.css">
+</head>
+<body>
+  <header>
+  <nav class="header-nav">
+    <h1><a href="./">Sidney Pham&#x27;s Blog</a></h1>
+    <ul>
+      <li>
+        <a href="./" title="Home"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+      </li>
+      <li>
+        <a href="./archive.html" title="Browse Posts"><i class="fa fa-archive" aria-hidden="true"></i>Browse Posts</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+  <main>
+    <article>
+        <header>
+          <h1><a href="./merge-sort-s-time-complexity.html" title="Permalink">Merge Sort&#x27;s Time Complexity</a></h1>
+          <address>Published <time>26 November, 2018</time> by Sidney Pham</address>
+        </header>
+        <div class="content">
+          <p>The merge sort algorithm sorts an array of length \(n\) by first dividing it into two subarrays of length (roughly) \(n/2\), recursively merge sorting the two subarrays and then <em>merging</em> them into one sorted array of length \(n\). The recursion bottoms out when it reaches an array of length \(1\), which is already sorted.</p>
+<p>The merging process is simple — imagine two sorted piles of cards, face up. To sort the two piles into one larger pile, you only ever compare the two cards at the top, choosing the appropriate card and then repeating this until you run out of cards.</p>
+<p>This is an example implementation of merge sort:</p>
+<pre><code class="language-python">def merge_sort(A):
+  merge_sort_helper(A, 0, len(A) - 1)
+  return A
+
+# Sort A[lo..hi] (inclusive).
+def merge_sort_helper(A, lo, hi):
+  if lo &lt; hi:
+    mid = (lo + hi) // 2
+    merge_sort_helper(A, lo, mid)
+    merge_sort_helper(A, mid + 1, hi)
+    merge(A, lo, mid, hi)
+
+# Merge the sorted subarrays A[lo..mid] and A[mid+1..hi] into A[lo..hi].
+def merge(A, lo, mid, hi):
+  left = A[lo:mid + 1][:] + [float('inf')]
+  right = A[mid + 1:hi + 1][:] + [float('inf')]
+
+  l = 0
+  r = 0
+  for i in range(lo, hi + 1):
+    if left[l] &lt;= right[r]:
+      A[i] = left[l]
+      l += 1
+    else:
+      A[i] = right[r]
+      r += 1
+</code></pre>
+<h2>A proof</h2>
+<p>We will be sloppy with constant factors that will be dominated by other terms, because they mostly just get in the way of the cool parts of the proof. If you want, you can account for them.</p>
+<p>Let \(T(n)\) represent the number of operations required to merge sort an array of length \(n\). Merge sort splits the array into two halves, recursively sorts them and then <em>merges</em> them together in sorted order. Therefore, we have</p>
+<p>$$
+T(1) = 0\\
+T(n) = 2T(n/2) + n.
+$$</p>
+<p>(Note that if we were to be pedantic, we would end up with a recurrence relation like \(T(n) = c_1 + 2T(\lfloor n/2 \rfloor) + c_2 n\).)</p>
+<p>Using the substitution \(M_n = T(2^n)\) to obtain a linear recurrence relation yields</p>
+<p>$$
+\begin{align}
+M_0 &amp;= 0,\\
+M_n &amp;= 2T(2^{n-1}) + 2^n\\
+&amp;= 2M_{n-1} + 2^n.
+\end{align}
+$$</p>
+<p>To find a closed form for \(M_n\) find the general solution \(M_n = h_n\) for the homogeneous form of the recurrence relation and a particular solution \(M_n = p_n\), which when added together give the general solution \(M_n = h_n + p_n\).</p>
+<p>The homogeneous form of the recurrence relation is \(M_n - 2M_{n-1} = 0\), which has characteristic equation \(\lambda - 2 = 0\), yielding the general solution</p>
+<p>$$
+h_n = A2^n.
+$$</p>
+<p>For the inhomogeneous form \(M_n - 2M_{n-1} = 2^n\), we guess \(p_n = c2^n\), but that is already a solution of the homogeneous equation, so we multiply by \(n\) which gives a new guess \(p_n = cn2^n\). This gives us</p>
+<p>$$
+\begin{align}
+&amp;cn2^n - 2(c(n-1)2^{n-1}) = 2^n\\
+\implies&amp; cn2^n - c(n - 1)2^n = 2^n\\
+\implies&amp; cn2^n - cn2^n + c2^n = 2^n\\
+\implies&amp; c = 1.
+\end{align}
+$$</p>
+<p>So the general solution is \(M_n = (A + n)2^n\), upon which we apply the initial condition \(M_0 = 0\), whence we finally arrive at \(M_n = n2^n\).</p>
+<p>Hence, for arrays whose lengths are powers of two, \(T(n) = n \log_2{n}.\)</p>
+
+        </div>
+    </article>
+    <nav class="more-posts">
+      <ul>
+        
+          <li id="previous-post"><h3>Previous Post: <a rel="prev" href="./an-xor-trick.html">An XOR Trick</a></h3></li>
+        
+        
+      </ul>
+    </nav>
+  </main>
+  <footer>
+  <h3>Made with &hearts; using <a href="https://github.com/quadrupleslap/leven">Leven</a>.</h3>
+</footer>
+
+  <script src="./assets/prism.js"></script>
+</body>
+</html>
